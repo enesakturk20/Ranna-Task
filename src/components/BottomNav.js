@@ -12,17 +12,28 @@ import useIsMobile from '../hooks/useIsMobile';
 
 const BottomNav = () => {
   const isMobile = useIsMobile();
-  
+
   const [selected, setSelected] = useState('dining');
   const scrollRef = useRef(null);
 
   const handleScroll = (direction) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -150 : 150,
-        behavior: 'smooth',
-      });
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+
+    if (direction === 'left' && container.scrollLeft <= 0) {
+      return; // En başta, sola kaydırma
     }
+
+    if (direction === 'right' && container.scrollLeft >= maxScrollLeft) {
+      return; // En sonda, sağa kaydırma
+    }
+
+    container.scrollBy({
+      left: direction === 'left' ? -150 : 150,
+      behavior: 'smooth',
+    });
   };
 
   const iconItemStyle = (name) => ({
